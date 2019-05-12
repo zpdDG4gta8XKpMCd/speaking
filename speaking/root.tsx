@@ -1,16 +1,15 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-type AudioContextConstructor = new (contextOptions?: AudioContextOptions) => AudioContext;
+import { broke, isNull } from './core';
 
-function thusAudioContext(): AudioContextConstructor {
-    // @ts-ignore;
-    return window.AudioContext || window.webkitAudioContext;
-}
+type MediaRecorderState = 'recording' | 'paused' | 'inactive';
+
+interface Enabled { start(): void; stop(): void; seeWhatStateIs(): MediaRecorderState; }
 
 declare var MediaRecorder: any;
 let audio: HTMLMediaElement | null = null;
 
-async function enable() {
+async function willEnable() {
     // this function cannot be called right at onload, because Chrome won't let this API
     // be available until the user activates the page (basically clicks somewhere)
     // so this code can only be run as soon as there is the first page activity
@@ -24,7 +23,7 @@ async function enable() {
     }
 
     mediaRecorder.ondataavailable = e => {
-        if (audio === null) return;
+        if (isNull(audio)) return;
         const blob = e.data;
         const url = window.URL.createObjectURL(blob);
         audio.src = url;
@@ -36,27 +35,50 @@ async function enable() {
         mediaRecorder.stop();
     }
 
-    return { start, stop }
-}
-
-let enabled: { start(): void; stop(): void; } | null = null;
-
-async function enableAndStart() {
-    if (enabled === null) {
-        enabled = await enable();
+    function seeWhatStateIs(): MediaRecorderState {
+        return mediaRecorder.state;
     }
-    enabled.start();
+
+    return { start, stop, seeWhatStateIs };
 }
 
-function stop() {
-    if (enabled === null) return;
-    enabled.stop();
+let _enabled: Enabled | null = null;
+async function willMakeSureEnabled(): Promise<Enabled> {
+    if (isNull(_enabled)) {
+        return _enabled = await willEnable();
+    }
+    return _enabled;
+}
+
+async function start() {
+    const { start } = await willMakeSureEnabled();
+    start();
+}
+
+async function stop() {
+    const { stop } = await willMakeSureEnabled();
+    stop();
+}
+
+
+async function toggle() {
+    const { seeWhatStateIs } = await willMakeSureEnabled();
+    const state = seeWhatStateIs();
+    switch (state) {
+        case 'inactive': start();
+            return;
+        case 'recording': stop();
+            return;
+        case 'paused':
+            return;
+        default: return broke(state);
+    }
 }
 
 const rootElement = document.getElementById('root')!;
 ReactDom.render(
     <div>
-        <button onClick={enableAndStart}>Start</button>
+        <button onClick={start}>Start</button>
         <button onClick={stop}>Stop</button>
         <div>
             <audio ref={self => audio = self} controls={true} />
@@ -64,3 +86,13 @@ ReactDom.render(
     </div>,
     rootElement
 );
+
+window.document.addEventListener('keydown', e => {
+    switch (e.which) {
+        case 32: // SPACE
+            toggle();
+            return;
+        default:
+            return;
+    }
+});
