@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { broke, isNull } from './core';
+import { isHtmlElement, isInteractiveHtmlElement } from './dom';
 
 type MediaRecorderState = 'recording' | 'paused' | 'inactive';
 
@@ -90,9 +91,19 @@ ReactDom.render(
 window.document.addEventListener('keydown', e => {
     switch (e.which) {
         case 32: // SPACE
+            if (seeIfAtToggableElement()) return;
             toggle();
             return;
         default:
             return;
     }
 });
+
+
+/** If there is a active element, then the space key would toggle it too,
+    so we gonna get a toggle on and immediately toggle off, to avoid it we
+    igore the space key if there is an active element. */
+function seeIfAtToggableElement() {
+    const { activeElement } = window.document;
+    return !isNull(activeElement) && isHtmlElement(activeElement) && isInteractiveHtmlElement(activeElement);
+}
