@@ -27,25 +27,53 @@ function start1() {
     source.start();
 }
 
-async function start() {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-    const AudioContext = thusAudioContext();
-    const context = new AudioContext();
-    const source = context.createMediaStreamSource(stream);
-    const processor = context.createScriptProcessor(1024, 1, 1);
+declare var MediaRecorder: any;
 
-    source.connect(processor);
-    processor.connect(context.destination);
+async function enable() {
 
-    processor.addEventListener('audioprocess', e => {
-        console.log(e.inputBuffer);
-    });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    const audio = document.createElement('audio');
+    audio.controls = true;
+    document.body.appendChild(audio);
+    const mediaRecorder = new MediaRecorder(stream);
+
+    function start() {
+        if (mediaRecorder.state !== 'inactive') return;
+        mediaRecorder.start();
+    }
+
+    mediaRecorder.ondataavailable = e => {
+        const blob = e.data;
+        const url = window.URL.createObjectURL(blob);
+        audio.src = url;
+    };
+
+    function stop() {
+        if (mediaRecorder.state !== 'recording') return;
+        mediaRecorder.stop();
+    }
+
+    return { start, stop }
+}
+
+let enabled: { start(): void; stop(): void; } | null = null;
+async function enableAndStart() {
+    if (enabled === null) {
+        enabled = await enable();
+    }
+    enabled.start();
+}
+
+function stop() {
+    if (enabled === null) return;
+    enabled.stop();
 }
 
 const rootElement = document.getElementById('root')!;
 ReactDom.render(
     <div>
-        <button onClick={start}>Start</button>
+        <button onClick={enableAndStart}>Start</button>
+        <button onClick={stop}>Stop</button>
     </div>,
     rootElement
 );
