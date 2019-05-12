@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { broke, isNull } from './core';
+import { broke, isNull, sureString } from './core';
 import { isHtmlElement, isInteractiveHtmlElement } from './dom';
 import { $on, inside } from './inside';
 import { Player, willEnableYouTube } from './youtube';
@@ -96,6 +96,8 @@ const inProps = inside<AppProps>();
 interface AppProps {
     state: MediaRecorderState;
 }
+
+const xxx = [{ id: 'tfz1HiXKuZ8', title: 'BALL, BOWL, BALD, BOLD, BOWLED' }];
 class App extends React.Component<AppProps> {
     render() {
         const { state } = this.props;
@@ -107,6 +109,21 @@ class App extends React.Component<AppProps> {
                 <button onClick={start}>Start</button>
                 <button onClick={stop}>Stop</button>
                 <span>{state}</span>
+            </div>
+            <div>
+                <ul>{
+                    xxx.map(({ id, title }) => {
+                        return <li key={sureString(id)}><a href="" onClick={async e => {
+                            e.preventDefault();
+                            console.log(id);
+                            const once = _enabled!.player.loadVideoById(id);
+                            console.log(once);
+                            const xxx = await once;
+                            console.log(xxx);
+                        }}>{title}</a></li>
+                    })
+                }
+                </ul>
             </div>
             <div>
                 <audio ref={self => audio = self} controls={true} />

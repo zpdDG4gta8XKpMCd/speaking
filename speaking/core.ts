@@ -11,3 +11,7 @@ export function broke(never: never): never {
 export function asAny(any: any): any {
     return any;
 }
+
+export function sureString(value: string): string {
+    return value;
+}

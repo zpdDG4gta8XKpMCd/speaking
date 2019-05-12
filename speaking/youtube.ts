@@ -1,6 +1,22 @@
 import { soon } from "./promises";
 
+
+type Quality = | 'small' | 'medium' | 'large' | 'hd720' | 'hd1080' | 'highres' | 'default';
+
 export interface Player {
+    loadVideoById(
+        videoId: string,
+        startSeconds?: number,
+        suggestedQuality?: Quality,
+    ): any;
+    loadVideoById(
+        options: {
+            videoId: String,
+            startSeconds?: Number,
+            endSeconds?: Number,
+            suggestedQuality?: Quality,
+        }
+    ): any;
 }
 
 declare var YT: any;
