@@ -7,34 +7,15 @@ function thusAudioContext(): AudioContextConstructor {
     return window.AudioContext || window.webkitAudioContext;
 }
 
-function start1() {
-    const AudioContext = thusAudioContext();
-    const context = new AudioContext();
-
-    const myArrayBuffer = context.createBuffer(2, context.sampleRate * 3, context.sampleRate);
-
-    for (let channel = 0; channel < myArrayBuffer.numberOfChannels; channel++) {
-        const nowBuffering = myArrayBuffer.getChannelData(channel);
-        for (let i = 0; i < myArrayBuffer.length; i++) {
-            nowBuffering[i] = Math.random() * 2 - 1;
-        }
-    }
-
-    const source = context.createBufferSource();
-
-    source.buffer = myArrayBuffer;
-    source.connect(context.destination);
-    source.start();
-}
-
 declare var MediaRecorder: any;
+let audio: HTMLMediaElement | null = null;
 
 async function enable() {
+    // this function cannot be called right at onload, because Chrome won't let this API
+    // be available until the user activates the page (basically clicks somewhere)
+    // so this code can only be run as soon as there is the first page activity
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    const audio = document.createElement('audio');
-    audio.controls = true;
-    document.body.appendChild(audio);
     const mediaRecorder = new MediaRecorder(stream);
 
     function start() {
@@ -43,9 +24,11 @@ async function enable() {
     }
 
     mediaRecorder.ondataavailable = e => {
+        if (audio === null) return;
         const blob = e.data;
         const url = window.URL.createObjectURL(blob);
         audio.src = url;
+        audio.play();
     };
 
     function stop() {
@@ -57,6 +40,7 @@ async function enable() {
 }
 
 let enabled: { start(): void; stop(): void; } | null = null;
+
 async function enableAndStart() {
     if (enabled === null) {
         enabled = await enable();
@@ -74,6 +58,9 @@ ReactDom.render(
     <div>
         <button onClick={enableAndStart}>Start</button>
         <button onClick={stop}>Stop</button>
+        <div>
+            <audio ref={self => audio = self} controls={true} />
+        </div>
     </div>,
     rootElement
 );
