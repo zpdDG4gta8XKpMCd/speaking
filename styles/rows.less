@@ -1,0 +1,15 @@
+@line-style: dotted 1px gray;
+.rows {
+    border-bottom: @line-style;
+    border-right: @line-style;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    flex: 1;
+    border-top: @line-style;
+    border-left: @line-style;
+}

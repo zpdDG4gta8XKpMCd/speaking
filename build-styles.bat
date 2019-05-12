@@ -1,0 +1,1 @@
+node ./node_modules/less/bin/lessc ./styles/all.less ./styles/all.css

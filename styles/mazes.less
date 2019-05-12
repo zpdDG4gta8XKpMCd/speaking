@@ -1,0 +1,13 @@
+.grid .row > div { width: 12px; height: 12px; }
+.grid .row > div { display: inline-block; border: 1px solid black; background: #ccc; }
+.grid div.in { background: #fff; }
+.grid div.e { border-right: none; padding-right: 1px; }
+.grid div.w { border-left: none; padding-left: 1px; }
+.grid div.n { border-top: none; padding-top: 1px; }
+.grid div.s { border-bottom: none; padding-bottom: 1px; }
+@outer-wall-size: 4px;
+.grid .row.as-first > div { border-top-width: @outer-wall-size }
+.grid .row.as-last > div { border-bottom-width: @outer-wall-size }
+.grid .row > div.as-first { border-left-width: @outer-wall-size }
+.grid .row > div.as-last { border-right-width: @outer-wall-size }
+.grid .row.as-last > div.s.as-last { border-bottom: none; padding-bottom: @outer-wall-size; }

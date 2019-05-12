@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@types/react": "16.8.0",
+    "@types/react-dom": "16.8.0",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "requirejs": "2.3.6"
+  },
+  "devDependencies": {
+    "less": "3.9.0",
+    "typescript": "3.5.0-dev.20190405"
+  }
+}

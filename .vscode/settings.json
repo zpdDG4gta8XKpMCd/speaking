@@ -1,0 +1,19 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "node_modules": true,
+        "scripts": true,
+        "bundled": true,
+        "**/*.css": true
+    },
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "typescript.preferences.renameShorthandProperties": false,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "emmet.showExpandedAbbreviation": "never",
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.enablePreviewFromQuickOpen": false,
+    "editor.snippetSuggestions": "bottom",
+}

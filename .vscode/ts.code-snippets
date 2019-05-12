@@ -1,0 +1,38 @@
+{
+    "rct": {
+        "scope": "typescriptreact",
+        "prefix": "rct",
+        "body": [
+            "import * as React from 'react';",
+            "import { broke } from './core';",
+            "import { $$on, toStewardOf } from './stewarding';",
+            "",
+            "export type ${1}Concern = { about: '' };",
+            "",
+            "export const in${1}Props = toStewardOf<${1}Props>();",
+            "",
+            "export interface ${1}Props {",
+            "    regarding: Regarding<${1}Concern>;",
+            "}",
+            "",
+            "export class ${1} extends React.Component<${1}Props, null> {",
+            "    render() {",
+            "        const {} = this.props;",
+            "        return <div></div>;",
+            "    }",
+            "}",
+            "",
+            "export function face${1}Concern(",
+            "    props: ${1}Props,",
+            "    concern: ${1}Concern,",
+            "): ${1}Props {",
+            "    switch(concern.about) {",
+            "        case '': {",
+            "            return in${1}Props[$$on](props, {});",
+            "        }",
+            "        default: return broke(concern.about);",
+            "    }",
+            "}"
+        ]
+    }
+}

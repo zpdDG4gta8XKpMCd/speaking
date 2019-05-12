@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "outDir": "./scripts",
+        "lib": ["es6", "dom"],
+        "types": [],
+        "module": "amd",
+        "target": "es6",
+        "rootDir": "./",
+        "jsx": "react",
+        "moduleResolution": "node",
+        "strictNullChecks": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": true,
+        "noUnusedParameters": true,
+    }
+}
