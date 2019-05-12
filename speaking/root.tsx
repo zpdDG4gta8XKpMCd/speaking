@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { broke, isNull } from './core';
 import { isHtmlElement, isInteractiveHtmlElement } from './dom';
+import { $on, inside } from './inside';
 
 type MediaRecorderState = 'recording' | 'paused' | 'inactive';
 
@@ -54,11 +55,13 @@ async function willMakeSureEnabled(): Promise<Enabled> {
 async function start() {
     const { start } = await willMakeSureEnabled();
     start();
+    lastProps = rerender(inProps.state[$on](lastProps, 'recording'));
 }
 
 async function stop() {
     const { stop } = await willMakeSureEnabled();
     stop();
+    lastProps = rerender(inProps.state[$on](lastProps, 'inactive'));
 }
 
 
@@ -76,17 +79,33 @@ async function toggle() {
     }
 }
 
+const inProps = inside<AppProps>();
+
+interface AppProps {
+    state: MediaRecorderState;
+}
+class App extends React.Component<AppProps> {
+    render() {
+        const { state } = this.props;
+        return <div>
+            <div>
+                <button onClick={start}>Start</button>
+                <button onClick={stop}>Stop</button>
+                <span>{state}</span>
+            </div>
+            <div>
+                <audio ref={self => audio = self} controls={true} />
+            </div>
+        </div>;
+    }
+}
+
 const rootElement = document.getElementById('root')!;
-ReactDom.render(
-    <div>
-        <button onClick={start}>Start</button>
-        <button onClick={stop}>Stop</button>
-        <div>
-            <audio ref={self => audio = self} controls={true} />
-        </div>
-    </div>,
-    rootElement
-);
+let lastProps = rerender({ state: 'inactive' });
+function rerender(props: AppProps): AppProps {
+    ReactDom.render(<App {...props} />, rootElement);
+    return props;
+}
 
 window.document.addEventListener('keydown', e => {
     switch (e.which) {
