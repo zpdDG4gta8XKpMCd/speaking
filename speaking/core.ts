@@ -7,3 +7,7 @@ export function broke(never: never): never {
     console.error(never);
     throw new Error('Unexpected case.');
 }
+
+export function asAny(any: any): any {
+    return any;
+}

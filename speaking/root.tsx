@@ -3,10 +3,16 @@ import * as ReactDom from 'react-dom';
 import { broke, isNull } from './core';
 import { isHtmlElement, isInteractiveHtmlElement } from './dom';
 import { $on, inside } from './inside';
+import { Player, willEnableYouTube } from './youtube';
 
 type MediaRecorderState = 'recording' | 'paused' | 'inactive';
 
-interface Enabled { start(): void; stop(): void; seeWhatStateIs(): MediaRecorderState; }
+interface Enabled {
+    start(): void;
+    stop(): void;
+    seeWhatStateIs(): MediaRecorderState;
+    player: Player;
+}
 
 declare var MediaRecorder: any;
 let audio: HTMLMediaElement | null = null;
@@ -16,6 +22,7 @@ async function willEnable() {
     // be available until the user activates the page (basically clicks somewhere)
     // so this code can only be run as soon as there is the first page activity
 
+    const player = await willEnableYouTube(youtubePlayerElementId);
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
     const mediaRecorder = new MediaRecorder(stream);
 
@@ -41,8 +48,12 @@ async function willEnable() {
         return mediaRecorder.state;
     }
 
-    return { start, stop, seeWhatStateIs };
+    return { start, stop, seeWhatStateIs, player };
 }
+
+const youtubePlayerElementId = 'youtube';
+
+
 
 let _enabled: Enabled | null = null;
 async function willMakeSureEnabled(): Promise<Enabled> {
@@ -53,8 +64,9 @@ async function willMakeSureEnabled(): Promise<Enabled> {
 }
 
 async function start() {
-    const { start } = await willMakeSureEnabled();
+    const { start, player } = await willMakeSureEnabled();
     start();
+    console.log(player);
     lastProps = rerender(inProps.state[$on](lastProps, 'recording'));
 }
 
@@ -88,6 +100,9 @@ class App extends React.Component<AppProps> {
     render() {
         const { state } = this.props;
         return <div>
+            <iframe id={youtubePlayerElementId}
+                width="640" height="390"
+                src="http://www.youtube.com/embed/M7lc1UVf-VE?enablejsapi=1" />
             <div>
                 <button onClick={start}>Start</button>
                 <button onClick={stop}>Stop</button>
