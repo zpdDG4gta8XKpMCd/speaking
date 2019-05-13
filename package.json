@@ -8,6 +8,8 @@
   },
   "devDependencies": {
     "less": "3.9.0",
-    "typescript": "3.5.0-dev.20190405"
+    "tslint": "5.16.0",
+    "typescript": "3.5.0-dev.20190405",
+    "typescript-tslint-plugin": "0.3.1"
   }
 }

@@ -1,4 +1,4 @@
-import { soon } from "./promises";
+import { soon } from './promises';
 
 
 type Quality = | 'small' | 'medium' | 'large' | 'hd720' | 'hd1080' | 'highres' | 'default';
@@ -30,12 +30,12 @@ export async function willEnableYouTube(elementId: string): Promise<Player> {
 
     function onPlayerReady() {
         console.log(2);
-    };
+    }
 
     function onPlayerStateChange(event: any) {
         console.log(3);
         console.log(event.data);
-    };
+    }
 
     w.onYouTubeIframeAPIReady = function () {
         console.log(1);
@@ -46,7 +46,7 @@ export async function willEnableYouTube(elementId: string): Promise<Player> {
             }
         });
         soonPlayer(player);
-    }
+    };
 
 
     var tag = document.createElement('script');

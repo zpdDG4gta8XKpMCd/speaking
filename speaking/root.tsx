@@ -81,9 +81,11 @@ async function toggle() {
     const { seeWhatStateIs } = await willMakeSureEnabled();
     const state = seeWhatStateIs();
     switch (state) {
-        case 'inactive': start();
+        case 'inactive':
+            start();
             return;
-        case 'recording': stop();
+        case 'recording':
+            stop();
             return;
         case 'paused':
             return;
@@ -150,10 +152,10 @@ class App extends React.Component<AppProps> {
                                     return <a href="" onClick={async e => {
                                         e.preventDefault();
                                         _enabled!.player.seekTo(start);
-                                    }}>{title}: {start} - {end}</a>
+                                    }}>{title}: {start} - {end}</a>;
                                 })}
                             </ul>
-                        </li>
+                        </li>;
                     })}
                 </ul>
             </div>
