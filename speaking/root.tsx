@@ -17,7 +17,7 @@ interface Enabled {
 declare var MediaRecorder: any;
 let audio: HTMLMediaElement | null = null;
 
-async function willEnable() {
+async function _willEnable() {
     // this function cannot be called right at onload, because Chrome won't let this API
     // be available until the user activates the page (basically clicks somewhere)
     // so this code can only be run as soon as there is the first page activity
@@ -58,7 +58,7 @@ const youtubePlayerElementId = 'youtube';
 let _enabled: Enabled | null = null;
 async function willMakeSureEnabled(): Promise<Enabled> {
     if (isNull(_enabled)) {
-        return _enabled = await willEnable();
+        return _enabled = await _willEnable();
     }
     return _enabled;
 }
@@ -97,7 +97,22 @@ interface AppProps {
     state: MediaRecorderState;
 }
 
-const xxx = [{ id: 'tfz1HiXKuZ8', title: 'BALL, BOWL, BALD, BOLD, BOWLED' }];
+interface Cut {
+}
+
+interface Clip {
+    id: string;
+    title: string;
+    cuts: Cut[];
+}
+
+const clips: Clip[] = [{
+    id: 'tfz1HiXKuZ8',
+    title: 'BALL, BOWL, BALD, BOLD, BOWLED',
+    cuts: [
+
+    ]
+}];
 class App extends React.Component<AppProps> {
     render() {
         const { state } = this.props;
@@ -112,7 +127,7 @@ class App extends React.Component<AppProps> {
             </div>
             <div>
                 <ul>{
-                    xxx.map(({ id, title }) => {
+                    clips.map(({ id, title }) => {
                         return <li key={sureString(id)}><a href="" onClick={async e => {
                             e.preventDefault();
                             console.log(id);
@@ -138,6 +153,19 @@ function rerender(props: AppProps): AppProps {
     ReactDom.render(<App {...props} />, rootElement);
     return props;
 }
+
+function waitForBeingActivated() {
+    let isBeingActivated = false;
+    async function activate() {
+        if (isBeingActivated) return;
+        isBeingActivated = true;
+        await willMakeSureEnabled();
+        window.document.removeEventListener('mousedown', activate);
+        isBeingActivated = false;
+    }
+    window.document.addEventListener('mousedown', activate);
+}
+waitForBeingActivated();
 
 window.document.addEventListener('keydown', e => {
     switch (e.which) {
