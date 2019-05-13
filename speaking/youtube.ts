@@ -17,6 +17,7 @@ export interface Player {
             suggestedQuality?: Quality,
         }
     ): any;
+    seekTo(seconds: number, allowSeekAhead?: boolean): void;
 }
 
 declare var YT: any;

@@ -98,6 +98,9 @@ interface AppProps {
 }
 
 interface Cut {
+    title: string;
+    start: number;
+    end: number;
 }
 
 interface Clip {
@@ -110,9 +113,14 @@ const clips: Clip[] = [{
     id: 'tfz1HiXKuZ8',
     title: 'BALL, BOWL, BALD, BOLD, BOWLED',
     cuts: [
-
+        {
+            title: 'ball',
+            start: 9,
+            end: 10,
+        }
     ]
 }];
+
 class App extends React.Component<AppProps> {
     render() {
         const { state } = this.props;
@@ -126,18 +134,27 @@ class App extends React.Component<AppProps> {
                 <span>{state}</span>
             </div>
             <div>
-                <ul>{
-                    clips.map(({ id, title }) => {
-                        return <li key={sureString(id)}><a href="" onClick={async e => {
-                            e.preventDefault();
-                            console.log(id);
-                            const once = _enabled!.player.loadVideoById(id);
-                            console.log(once);
-                            const xxx = await once;
-                            console.log(xxx);
-                        }}>{title}</a></li>
-                    })
-                }
+                <ul>
+                    {clips.map(({ id, title, cuts }) => {
+                        return <li key={sureString(id)}>
+                            <a href="" onClick={async e => {
+                                e.preventDefault();
+                                console.log(id);
+                                const once = _enabled!.player.loadVideoById(id);
+                                console.log(once);
+                                const xxx = await once;
+                                console.log(xxx);
+                            }}>{title}</a>
+                            <ul>
+                                {cuts.map(({ title, start, end }) => {
+                                    return <a href="" onClick={async e => {
+                                        e.preventDefault();
+                                        _enabled!.player.seekTo(start);
+                                    }}>{title}: {start} - {end}</a>
+                                })}
+                            </ul>
+                        </li>
+                    })}
                 </ul>
             </div>
             <div>
