@@ -1,4 +1,4 @@
-# Hearing/speaking/comparing tool for English learners
+# Pronunciation trainer for English learners
 
 This tool is for practicing English pronounciation.
 
