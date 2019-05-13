@@ -103,6 +103,7 @@ interface AppProps {
 
 interface Cut {
     title: string;
+    pronunciation: string;
     start: number;
     end: number;
 }
@@ -119,6 +120,7 @@ const clips: Clip[] = [{
     cuts: [
         {
             title: 'ball',
+            pronunciation: 'bôll',
             start: 9,
             end: 10,
         }
@@ -162,11 +164,11 @@ class App extends React.Component<AppProps> {
                                 console.log(xxx);
                             }}>{title}</a>
                             <ul>
-                                {cuts.map(({ title, start, end }) => {
+                                {cuts.map(({ title, start, end, pronunciation }) => {
                                     return <a key={title + start + end} href="" onClick={async e => {
                                         e.preventDefault();
                                         _enabled!.player.seekTo(start);
-                                    }}>{title}: {start} - {end}</a>;
+                                    }}>{title} ({pronunciation}): {start} - {end}</a>;
                                 })}
                             </ul>
                         </li>;
