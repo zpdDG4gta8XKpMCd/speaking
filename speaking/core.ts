@@ -1,6 +1,9 @@
 export function isNull<T extends ([null] extends [T] ? any : never)>(value: T): value is T & null {
     return value === null;
 }
+export function isUndefined<T extends ([undefined] extends [T] ? any : never)>(value: T): value is T & undefined {
+    return value === undefined;
+}
 
 export function broke(never: never): never {
     // tslint:disable-next-line: no-debugger

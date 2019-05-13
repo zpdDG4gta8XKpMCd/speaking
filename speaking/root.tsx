@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { broke, isNull, sureString } from './core';
+import { Curtain } from './curtain';
 import { isHtmlElement, isInteractiveHtmlElement } from './dom';
 import { $on, inside } from './inside';
 import { Player, willEnableYouTube } from './youtube';
@@ -97,6 +98,7 @@ const inProps = inside<AppProps>();
 
 interface AppProps {
     state: MediaRecorderState;
+    isActivated: boolean;
 }
 
 interface Cut {
@@ -123,10 +125,22 @@ const clips: Clip[] = [{
     ]
 }];
 
+let isActivatingInitiated = false;
+async function initiateActivating() {
+    if (isActivatingInitiated) return;
+    isActivatingInitiated = true;
+    _enabled = await willMakeSureEnabled();
+    isActivatingInitiated = false;
+    lastProps = rerender(inProps.isActivated[$on](lastProps, true));
+}
+
 class App extends React.Component<AppProps> {
     render() {
-        const { state } = this.props;
+        const { state, isActivated } = this.props;
         return <div>
+            {!isActivated ? <Curtain className="as-non-activated" onClickedCurtain={initiateActivating}>
+                <div className="curtain-content">Click to activate</div>
+            </Curtain> : null}
             <iframe id={youtubePlayerElementId}
                 width="640" height="390"
                 src="http://www.youtube.com/embed/M7lc1UVf-VE?enablejsapi=1" />
@@ -149,7 +163,7 @@ class App extends React.Component<AppProps> {
                             }}>{title}</a>
                             <ul>
                                 {cuts.map(({ title, start, end }) => {
-                                    return <a href="" onClick={async e => {
+                                    return <a key={title + start + end} href="" onClick={async e => {
                                         e.preventDefault();
                                         _enabled!.player.seekTo(start);
                                     }}>{title}: {start} - {end}</a>;
@@ -167,24 +181,13 @@ class App extends React.Component<AppProps> {
 }
 
 const rootElement = document.getElementById('root')!;
-let lastProps = rerender({ state: 'inactive' });
+let lastProps = rerender({ state: 'inactive', isActivated: false });
+
+
 function rerender(props: AppProps): AppProps {
     ReactDom.render(<App {...props} />, rootElement);
     return props;
 }
-
-function waitForBeingActivated() {
-    let isBeingActivated = false;
-    async function activate() {
-        if (isBeingActivated) return;
-        isBeingActivated = true;
-        await willMakeSureEnabled();
-        window.document.removeEventListener('mousedown', activate);
-        isBeingActivated = false;
-    }
-    window.document.addEventListener('mousedown', activate);
-}
-waitForBeingActivated();
 
 window.document.addEventListener('keydown', e => {
     switch (e.which) {
